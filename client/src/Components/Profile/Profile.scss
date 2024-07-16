@@ -1,0 +1,13 @@
+.container {
+	.profile {
+		display: flex;
+		align-items: center;
+		margin: 50px 0px;
+		border: 1px solid black;
+		border-radius: 5px;
+		padding: 10px;
+		img {
+			border: none !important;
+		}
+	}
+}
