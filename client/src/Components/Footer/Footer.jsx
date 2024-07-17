@@ -3,8 +3,8 @@ import "bootstrap/dist/css/bootstrap.css";
 import Logo from "../../assets/images/Signconnect.jpg";
 import Facebook from "../../assets/icons/facebook.svg";
 import Twitter from "../../assets/icons/x.svg";
-import LinkedIn from "../../assets/icons/linkedIn.png";
-import Email from "../../assets/icons/send.svg";
+import LinkedIn from "../../assets/icons/linkedIn.svg";
+import Email from "../../assets/icons/email.svg";
 import Phone from "../../assets/icons/phone.svg";
 import "./Footer.scss";
 
@@ -54,13 +54,13 @@ const Footer = () => {
 							<a
 								className="link p-3"
 								href="mailto:ahabnnie@gmail.com?Signconnect">
-								signconnect@gmail.com
 								<img src={Email} alt="Email" />
+								signconnect@gmail.com
 							</a>
 						</li>
 						<li>
 							<a className="link p-3" href="tel:+233-201-726-152">
-								<p>+233201726152</p> <img src={Phone} alt="Phone" />
+								<img src={Phone} alt="Phone" /> +233201726152
 							</a>
 						</li>
 						<li>

@@ -19,18 +19,15 @@
 .signUp {
 	display: flex;
 	align-items: center;
-	p {
-		display: flex;
-		align-items: center;
-		margin: none;
-	}
+
 	a {
-		padding: 15px;
+		padding: 10px 15px;
 		background-color: brown;
 		border-radius: 5px;
 		text-decoration: none;
 		color: black;
 		font-size: 20px;
+		margin: 15px;
 	}
 }
 .features {

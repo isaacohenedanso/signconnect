@@ -14,21 +14,48 @@ function Login() {
 			email: emailId.current.value,
 			password: passwordId.current.value,
 		};
-		console.log(loginData.password);
-		console.log(loginData.email);
+		// console.log(loginData.password);
+		// console.log(loginData.email);
 		try {
 			const response = await axios.post(
 				"http://localhost:3001/login",
 
 				loginData
 			);
-			console.log("Server response:", response.data);
-			window.alert("Login Successful");
-			navigate("/New_meeting");
+			// console.log("Server response:", response.data);
+			const {
+				firstName,
+				lastName,
+				email,
+				password,
+				profile_image,
+				sex,
+				country,
+				city,
+			} = response.data.user;
+			// console.log("User details:", { firstName, lastName, email });
+			// window.alert(` Welcome ${firstName} ${lastName}`)
+
+			// const userName = response.data.firstName;
+
+			// console.log("userName", userName);
+			navigate("/New_meeting", {
+				state: {
+					firstName,
+					lastName,
+					email,
+					password,
+					profile_image,
+					sex,
+					country,
+					city,
+				},
+			});
+			// console.log("Navigating with state:", { userName });
 		} catch (error) {
-			window.alert("Wrong loggins");
-			console.error("Error logging in:", error);
-			console.log("Invalid email or password");
+			// window.alert("Wrong loggins");
+			// console.error("Error logging in:", error);
+			// console.log("Invalid email or password");
 		}
 	};
 

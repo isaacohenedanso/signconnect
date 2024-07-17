@@ -7,13 +7,12 @@ const Header = () => {
 	const location = useLocation();
 
 	const isNewMeeting = location.pathname === "/New_meeting";
-	// const isProfile = location.pathname === "/Profile";
+	const isProfile = location.pathname === "/Profile";
 	if (isNewMeeting) {
 		return null;
+	} else if (isProfile) {
+		return null;
 	}
-	// } else if (isProfile) {
-	// 	return null;
-	// }
 
 	return (
 		<div className="header">

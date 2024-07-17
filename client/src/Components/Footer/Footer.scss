@@ -1,5 +1,8 @@
 div.footer nav {
-	// background-color: brown;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #928e8e transparent transparent transparent;
+	margin-top: 60px;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -30,9 +33,9 @@ div.footer nav {
 				list-style: none;
 				padding: none;
 				&:hover {
-					border-width: 3px;
-					border-style: solid;
-					border-color: transparent transparent teal transparent;
+					// border-width: 3px;
+					// border-style: solid;
+					// border-color: transparent transparent teal transparent;
 					border-radius: 4px;
 				}
 				.active {
@@ -47,6 +50,13 @@ div.footer nav {
 					img {
 						width: 30px;
 						aspect-ratio: 1;
+					}
+				}
+				a {
+					img {
+						width: 30px;
+						height: 30px;
+						padding: 5px;
 					}
 				}
 			}

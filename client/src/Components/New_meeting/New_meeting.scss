@@ -1,10 +1,8 @@
 body {
 	margin: 0;
-	// overflow: hidden;
-
 	.new_meeting {
 		display: grid;
-		grid: 10vh 35vh 25vh 20vh 10vh / 20vw auto 20vw 12vw 25vw;
+		grid: 12vh 33vh 25vh 20vh 10vh / 20vw auto 20vw 12vw 23vw;
 		grid-template-areas:
 			"logo space available_participants link profile"
 			"video_feed video_feed video_feed video_feed participants"
@@ -23,15 +21,18 @@ body {
 
 			img {
 				width: 70px;
-				height: 50px;
+				height: 55px;
 				border-radius: 9px;
 			}
 			span {
 				p.logo_name {
-					font-size: 24px;
+					font-size: 20px;
+					color: #fff;
+					margin-bottom: 0px;
 				}
 				.date {
-					font-size: 20px;
+					font-size: 14px;
+					margin-bottom: -5px;
 				}
 			}
 		}
@@ -56,6 +57,7 @@ body {
 
 			img {
 				width: 30px;
+				height: 20px;
 				margin-left: -35px;
 			}
 			p {
@@ -76,8 +78,8 @@ body {
 			padding: 0px 10px;
 			border-radius: 40px;
 			background-color: #242738;
-			width: 75%;
-			height: 60px;
+			width: 80%;
+			height: 70px;
 			color: #928e8e;
 
 			div {
@@ -88,27 +90,28 @@ body {
 					margin-left: 5px;
 				}
 				span {
-					display: flex;
-					flex-direction: column;
-					width: auto important;
-
-					pre.user_name {
-						font-size: 20px;
+					padding: auto !important;
+					p.user_name {
+						font-size: 16px;
 						font-weight: 900;
 						width: auto important;
-						margin-bottom: 0px;
+						margin: 0px;
 					}
 					p.role {
 						font-size: 14px;
-						line-height: 0.5;
-						margin-top: 5px;
+						margin: 0px;
 					}
 				}
 			}
-			[alt="profile"] {
+			.ellipsesV {
 				width: 5px;
 				height: 40px;
 				margin-right: 25px;
+				cursor: pointer;
+				.ellipsesV:hover {
+					background-color: red;
+					border-radius: 50%;
+				}
 			}
 		}
 		.video_feed {
@@ -117,11 +120,24 @@ body {
 			display: flex;
 			align-items: center;
 			justify-content: center;
-
 			.user {
 				width: 100%;
 				height: 100%;
 				padding: 15px 45px;
+				div.top-right-corner-icons {
+					position: absolute;
+					right: 5px;
+					top: 5px;
+					img {
+						width: 40px;
+						height: 40px;
+						margin: 10px;
+						background-color: rgba(36, 39, 56, 0.45);
+						border-radius: 50%;
+						padding: 10px;
+						cursor: pointer;
+					}
+				}
 				& > * {
 					border-radius: 15px;
 				}
@@ -288,4 +304,11 @@ body {
 			}
 		}
 	}
+}
+.alert {
+	position: absolute;
+	top: 20px;
+	width: 80vw;
+	left: 10vw;
+	right: 10vw;
 }

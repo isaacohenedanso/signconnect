@@ -16,7 +16,7 @@ import Expand from "../../assets/icons/expand.svg";
 import Compress from "../../assets/icons/compress.svg";
 import "bootstrap/dist/css/bootstrap.css";
 import "./New_meeting.scss";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import {
 	LocalUser, //render audio and video for local user
 	RemoteUser, //render audio and video for remote user
@@ -27,7 +27,7 @@ import {
 	usePublish, //publish audio and video tracks for all users
 	useRemoteUsers, //get all remote users
 } from "agora-rtc-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function New_meeting() {
 	//
@@ -39,6 +39,27 @@ function New_meeting() {
 		channel: "SIGCONNECTOR",
 	};
 	//
+	// const [showWelcome, setShowWelcome] = useState(false);
+	const navigate = useNavigate();
+	const location = useLocation();
+	const {
+		firstName,
+		lastName,
+		email,
+		password,
+		profile_image,
+		sex,
+		country,
+		city,
+	} = location.state || {};
+
+	useEffect(() => {
+		if (firstName) {
+			// console.log(`Welcome, ${firstName} ${lastName}!`);
+			// window.alert(` welcome ${firstName} ${lastName}`);
+		}
+	}, [firstName, lastName]);
+
 	useJoin(
 		{
 			appid: AgoraConfig.appid,
@@ -56,153 +77,199 @@ function New_meeting() {
 	//remote users
 	const remoteUsers = useRemoteUsers();
 	//
-	const navigate = useNavigate();
+
+	const useShowDate = () => {
+		const [dateTime, setDateTime] = useState("");
+
+		useEffect(() => {
+			const updateTime = () => {
+				let date = new Date();
+				let today_Date = date.getDate();
+				let Month = date.getMonth();
+				let Year = date.getFullYear();
+				let Hours = date.getHours().toString().padStart(2, "0");
+				let Minutes = date.getMinutes().toString().padStart(2, "0");
+				let Months = [
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr",
+					"May",
+					"Jun",
+					"Jul",
+					"Aug",
+					"Sep",
+					"Oct",
+					"Nov",
+					"Dec",
+				];
+				setDateTime(
+					`${Months[Month]} ${today_Date} ${Year} | ${Hours}:${Minutes}`
+				);
+			};
+
+			updateTime(); // Initial call to set the date immediately
+
+			const timerId = setInterval(updateTime, 1000);
+
+			// Cleanup function
+			return () => clearInterval(timerId);
+		}, []);
+
+		return dateTime;
+	};
 
 	return (
-		<div className="new_meeting">
-			<div className="logo ">
-				<img src={SignConnect} alt="logo" className=" mx-3" />
-				<span>
-					<p className="logo_namw">SIGNCONNECT</p>
-					<p className="date"></p>
-				</span>
-			</div>
-			<div className="space"></div>
-			<div className="availaible_participants"></div>
-			<div className="link  ">
-				<img src={Link} alt="link" />
-				<p>| link to room</p>
-			</div>
-			<div
-				className="profile"
-				onClick={() => {
-					navigate("/Profle", { state: { email: "mu@gmail.com" } });
-				}}>
-				<div>
-					<img src={User} alt="link" />
+		<div>
+			{firstName && (
+				<div
+					className="alert alert-success alert-dismissible fade show"
+					role="alert">
+					Welcome {firstName} {lastName} {email}
+					<button
+						className="btn btn-close"
+						data-bs-dismiss="alert"
+						aria-label="Close"></button>
+				</div>
+			)}
+			<div className="new_meeting">
+				<div className="logo ">
+					<img src={SignConnect} alt="logo" className=" mx-3" />
 					<span>
-						<pre className="user_name">Adam Joseph</pre>
-						<p className="role">Moderator</p>
+						<p className="logo_name">SIGNCONNECT</p>
+						<p className="date">{useShowDate()}</p>
 					</span>
 				</div>
-				<img src={EllipsesV} alt="profile" className="ellipsesV" />
-			</div>
-			<div className="video_feed">
-				{isConnected ? (
-					<div className="user">
-						<LocalUser
-							audioTrack={localMicrophoneTrack}
-							cameraOn={cameraOn}
-							micOn={micOn}
-							videoTrack={localCameraTrack}
-							cover="https://www.agora.io/en/wp-content/uploads/2022/10/3d-spatial-audio-icon.svg">
-							<samp className="user-name">You Paa</samp>
-							<div
-								className="top-right-corner-icons"
-								style={{ position: "absolute", right: "5px", top: "5px" }}>
-								<img
-									src={AudioWave}
-									alt="audiowave"
-									style={{
-										width: "30px",
-										aspectRatio: "1",
-										margin: "5px",
-										backgroundColor: "#2427384d",
-										borderRadius: "50%",
-										padding: "5px",
-									}}
-								/>
-								<img
-									src={cameraOn ? Compress : Expand}
-									alt="expand-or-compress"
-									style={{
-										width: "20px",
-										height: "30px",
-										margin: "5px",
-										backgroundColor: "#2427384d",
-										borderRadius: "50%",
-										padding: "5px",
-									}}
-								/>
-							</div>
-						</LocalUser>
+				<div className="space"></div>
+				<div className="availaible_participants"></div>
+				<div className="link  ">
+					<img src={Link} alt="link" />
+					<p>| link to room</p>
+				</div>
+				<div
+					className="profile"
+					onClick={() => {
+						navigate("/Profile", {
+							state: {
+								firstName,
+								lastName,
+								email,
+								password,
+								profile_image,
+								sex,
+								country,
+								city,
+							},
+						});
+						console.log("Profile: ", email);
+					}}>
+					<div>
+						<img src={User} alt="link" />
+						<span>
+							<p className="user_name">
+								{firstName} {lastName}
+							</p>
+							<p className="role">Moderator</p>
+						</span>
 					</div>
-				) : (
-					<div className="join-room">
-						<img alt="SignConnect" className="logo" src={SignConnect} />
-						<button
-							className={`join-channel ${
-								!AgoraConfig.appid || !AgoraConfig.channel ? "disabled" : ""
-							}`}
-							disabled={!AgoraConfig.appid || !AgoraConfig.channel}
-							onClick={() => {
-								setCalling(true);
-							}}>
-							<span>Join Channel</span>
+					<img src={EllipsesV} alt="profile" className="ellipsesV" />
+				</div>
+				<div className="video_feed">
+					{isConnected ? (
+						<div className="user">
+							<LocalUser
+								audioTrack={localMicrophoneTrack}
+								cameraOn={cameraOn}
+								micOn={micOn}
+								videoTrack={localCameraTrack}
+								cover="https://www.agora.io/en/wp-content/uploads/2022/10/3d-spatial-audio-icon.svg">
+								<samp className="user-name">{firstName}</samp>
+								<div className="top-right-corner-icons">
+									<img src={AudioWave} alt="audiowave" />
+									<img
+										src={cameraOn ? Expand : Compress}
+										alt="expand-or-compress"
+									/>
+								</div>
+							</LocalUser>
+						</div>
+					) : (
+						<div className="join-room">
+							<img alt="SignConnect" className="logo" src={SignConnect} />
+							<button
+								className={`join-channel ${
+									!AgoraConfig.appid || !AgoraConfig.channel ? "disabled" : ""
+								}`}
+								disabled={!AgoraConfig.appid || !AgoraConfig.channel}
+								onClick={() => {
+									setCalling(true);
+								}}>
+								<span>Join Channel</span>
+							</button>
+						</div>
+					)}
+				</div>
+				<div className="participants">
+					<h2>Participants</h2>
+					<div>$space*</div>
+				</div>
+				<div className="speakers">
+					{remoteUsers.map((user) => (
+						<div className="user" key={user.uid}>
+							<RemoteUser
+								cover="https://www.agora.io/en/wp-content/uploads/2022/10/3d-spatial-audio-icon.svg"
+								user={user}>
+								<samp className="user-name">{user.uid}</samp>
+							</RemoteUser>
+						</div>
+					))}
+				</div>
+				<div className="chats">
+					<h2>Chats</h2>
+					<div>1space*</div>
+				</div>
+				{isConnected && (
+					<div className="controls">
+						<button className="btn" onClick={() => setMic((a) => !a)}>
+							<img
+								src={micOn ? MicOff : Mic}
+								alt={micOn ? "Mic off" : "Mic On"}
+							/>
+						</button>
+						<button className="btn" onClick={() => setCamera((a) => !a)}>
+							<img
+								src={cameraOn ? VideocamOff : Videocam}
+								alt={cameraOn ? "camera off" : "camera On"}
+							/>
+						</button>
+						<button className="btn" onClick={() => setCamera((a) => !a)}>
+							<img src={Upload} alt="Upload" />
+						</button>
+						<button className="btn" onClick={() => setCamera((a) => !a)}>
+							<img src={Message} alt="Message" />
+						</button>
+						<button className="btn" onClick={() => setCamera((a) => !a)}>
+							<img src={EllipsisH} alt="EllipsisH" />
 						</button>
 					</div>
 				)}
-			</div>
-			<div className="participants">
-				<h2>Participants</h2>
-				<div>$space*</div>
-			</div>
-			<div className="speakers">
-				{remoteUsers.map((user) => (
-					<div className="user" key={user.uid}>
-						<RemoteUser
-							cover="https://www.agora.io/en/wp-content/uploads/2022/10/3d-spatial-audio-icon.svg"
-							user={user}>
-							<samp className="user-name">{user.uid}</samp>
-						</RemoteUser>
+				{isConnected && (
+					<div className="end_call">
+						<button
+							className={`btn btn-phone ${calling ? "btn-phone-active" : ""}`}
+							onClick={() => setCalling((a) => !a)}>
+							{calling ? <p>End Call</p> : <i className="i-mdi-phone" />}
+						</button>
 					</div>
-				))}
-			</div>
-			<div className="chats">
-				<h2>Chats</h2>
-				<div>1space*</div>
-			</div>
-			{isConnected && (
-				<div className="controls">
-					<button className="btn" onClick={() => setMic((a) => !a)}>
-						<img
-							src={micOn ? MicOff : Mic}
-							alt={micOn ? "Mic off" : "Mic On"}
-						/>
-					</button>
-					<button className="btn" onClick={() => setCamera((a) => !a)}>
-						<img
-							src={cameraOn ? VideocamOff : Videocam}
-							alt={cameraOn ? "camera off" : "camera On"}
-						/>
-					</button>
-					<button className="btn" onClick={() => setCamera((a) => !a)}>
-						<img src={Upload} alt="Upload" />
-					</button>
-					<button className="btn" onClick={() => setCamera((a) => !a)}>
-						<img src={Message} alt="Message" />
-					</button>
-					<button className="btn" onClick={() => setCamera((a) => !a)}>
-						<img src={EllipsisH} alt="EllipsisH" />
+				)}
+				<div className="type_something">
+					<input type="text" placeholder="Type Something..." />
+					<button type="submit">
+						<img src={Send} alt="" />
 					</button>
 				</div>
-			)}
-			{isConnected && (
-				<div className="end_call">
-					<button
-						className={`btn btn-phone ${calling ? "btn-phone-active" : ""}`}
-						onClick={() => setCalling((a) => !a)}>
-						{calling ? <p>End Call</p> : <i className="i-mdi-phone" />}
-					</button>
-				</div>
-			)}
-			<div className="type_something">
-				<input type="text" placeholder="Type Something..." />
-				<button type="submit">
-					<img src={Send} alt="" />
-				</button>
+				<Outlet />
 			</div>
-			<Outlet />
 		</div>
 	);
 }

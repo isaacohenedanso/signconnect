@@ -21,7 +21,7 @@ function Home() {
 					className="section_one"
 				/>
 				<div className="signUp">
-					<p>New to Signconnect?,</p>
+					New to Signconnect?
 					<NavLink activeclassname="active btn" to="/SignUP">
 						Sign UP
 					</NavLink>

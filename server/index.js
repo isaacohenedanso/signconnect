@@ -54,9 +54,13 @@ app.post("/login", async (req, res) => {
 			console.log("Incorrect password");
 			return res.status(400).json({ message: "The password is incorrect" });
 		}
+		const { firstName, lastName, sex, profile_image, country, city } = user;
 
 		// If everything is correct
-		res.status(200).json({ message: "Login successful" });
+		res.status(200).json({
+			message: "Login successful",
+			user: { firstName, lastName, sex, email, profile_image, country, city },
+		});
 	} catch (error) {
 		console.log(error);
 		// res.status(500).json({ message: "Internal server error" });
