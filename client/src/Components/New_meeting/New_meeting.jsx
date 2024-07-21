@@ -1,6 +1,5 @@
 // imports
 import SignConnect from "../../assets/images/Signconnect.jpg";
-import User from "../../assets/images/circled-user-male-skin-type.svg";
 import MicOff from "../../assets/icons/muteMicrophone.svg";
 import Mic from "../../assets/icons/microphone.svg";
 import Videocam from "../../assets/icons/videocam.svg";
@@ -14,9 +13,7 @@ import EllipsisH from "../../assets/icons/ellipsisH.svg";
 import AudioWave from "../../assets/icons/audioWave.svg";
 import Expand from "../../assets/icons/expand.svg";
 import Compress from "../../assets/icons/compress.svg";
-import "bootstrap/dist/css/bootstrap.css";
-import "./New_meeting.scss";
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import User from "../../assets/icons/user.svg";
 import {
 	LocalUser, //render audio and video for local user
 	RemoteUser, //render audio and video for remote user
@@ -28,38 +25,20 @@ import {
 	useRemoteUsers, //get all remote users
 } from "agora-rtc-react";
 import { useState, useEffect } from "react";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.css";
+import "./New_meeting.scss";
 
 function New_meeting() {
-	//
 	const [calling, setCalling] = useState(false);
+	const navigate = useNavigate();
+	const location = useLocation();
 	const isConnected = useIsConnected(); //stores user connection status
-	// agora config
 	const AgoraConfig = {
 		appid: "7d826d66b1004161a75360668f8ccce3",
 		channel: "SIGCONNECTOR",
 	};
 	//
-	// const [showWelcome, setShowWelcome] = useState(false);
-	const navigate = useNavigate();
-	const location = useLocation();
-	const {
-		firstName,
-		lastName,
-		email,
-		password,
-		profile_image,
-		sex,
-		country,
-		city,
-	} = location.state || {};
-
-	useEffect(() => {
-		if (firstName) {
-			// console.log(`Welcome, ${firstName} ${lastName}!`);
-			// window.alert(` welcome ${firstName} ${lastName}`);
-		}
-	}, [firstName, lastName]);
-
 	useJoin(
 		{
 			appid: AgoraConfig.appid,
@@ -77,7 +56,77 @@ function New_meeting() {
 	//remote users
 	const remoteUsers = useRemoteUsers();
 	//
+	const { firstName, lastName, email, profile_image, sex, country, city } =
+		location.state || {};
 
+	useEffect(() => {
+		const allParticipants = document.querySelector(".all-participants");
+		// Function to add a participant
+		const addParticipant = (name, isLocal = false) => {
+			const existingParticipant = allParticipants.querySelector(
+				`[data-participant="${name}"]`
+			);
+			if (!existingParticipant) {
+				const participant = document.createElement("div");
+				participant.className = "participant";
+				participant.style.padding = "5px";
+				participant.setAttribute("data-participant", name);
+
+				const img = document.createElement("img");
+				img.src = User;
+				img.alt = "User";
+
+				const p = document.createElement("p");
+				p.textContent = name;
+				if (isLocal) {
+					p.textContent += " (You)";
+				}
+
+				participant.appendChild(img);
+				participant.appendChild(p);
+				allParticipants.appendChild(participant);
+			}
+		};
+
+		if (isConnected) {
+			// Add local user
+			const localUserName = `${firstName} ${lastName}`;
+			addParticipant(`${localUserName}`, true);
+
+			// Add remote users
+			remoteUsers.forEach((user) => {
+				addParticipant(`${user.uid}`, false);
+				// console.log("remote participants", remoteUserName.current.value);
+				// window.alert("remote participants", remoteUserName.current.value);
+			});
+
+			// Clean up function to remove participants that are no longer connected
+			return () => {
+				const participants = allParticipants.querySelectorAll(".participant");
+				participants.forEach((participant) => {
+					const name = participant.getAttribute("data-participant");
+					if (
+						name !== `localUserName` &&
+						!remoteUsers.some((user) => user.uid === name)
+					) {
+						allParticipants.removeChild(participant);
+					}
+				});
+			};
+		}
+	}, [isConnected, firstName, lastName, remoteUsers]);
+
+	const disappear = () => {
+		setTimeout(() => {
+			document.querySelector(".alert").style.display = "none";
+		}, 3000);
+	};
+	const ExpandScreen = () => {
+		// const videoFeed = document.querySelector(".video_feed");
+		// videoFeed;
+		console.log("bebe");
+	};
+	disappear();
 	const useShowDate = () => {
 		const [dateTime, setDateTime] = useState("");
 
@@ -123,9 +172,9 @@ function New_meeting() {
 		<div>
 			{firstName && (
 				<div
-					className="alert alert-success alert-dismissible fade show"
+					className="alert alert-success alert-dismissible fade show text-center"
 					role="alert">
-					Welcome {firstName} {lastName} {email}
+					Welcome {firstName} {lastName}
 					<button
 						className="btn btn-close"
 						data-bs-dismiss="alert"
@@ -154,7 +203,6 @@ function New_meeting() {
 								firstName,
 								lastName,
 								email,
-								password,
 								profile_image,
 								sex,
 								country,
@@ -185,10 +233,16 @@ function New_meeting() {
 								cover="https://www.agora.io/en/wp-content/uploads/2022/10/3d-spatial-audio-icon.svg">
 								<samp className="user-name">{firstName}</samp>
 								<div className="top-right-corner-icons">
-									<img src={AudioWave} alt="audiowave" />
+									<img
+										src={AudioWave}
+										alt="audiowave"
+										className="audiowave"
+										onClick={ExpandScreen}
+									/>
 									<img
 										src={cameraOn ? Expand : Compress}
 										alt="expand-or-compress"
+										className=""
 									/>
 								</div>
 							</LocalUser>
@@ -196,6 +250,11 @@ function New_meeting() {
 					) : (
 						<div className="join-room">
 							<img alt="SignConnect" className="logo" src={SignConnect} />
+							{/* <input
+								type="text"
+								placeholder="Enter your userName"
+								ref={remoteUserName}
+							/> */}
 							<button
 								className={`join-channel ${
 									!AgoraConfig.appid || !AgoraConfig.channel ? "disabled" : ""
@@ -210,8 +269,8 @@ function New_meeting() {
 					)}
 				</div>
 				<div className="participants">
-					<h2>Participants</h2>
-					<div>$space*</div>
+					<p>Participants</p>
+					<div className="all-participants"></div>
 				</div>
 				<div className="speakers">
 					{remoteUsers.map((user) => (
@@ -225,30 +284,36 @@ function New_meeting() {
 					))}
 				</div>
 				<div className="chats">
-					<h2>Chats</h2>
-					<div>1space*</div>
+					<p>Chats</p>
+					<div></div>
 				</div>
 				{isConnected && (
 					<div className="controls">
-						<button className="btn" onClick={() => setMic((a) => !a)}>
+						<button
+							style={{ backgroundColor: micOn ? "#0e74ff" : "#fc484a" }}
+							className="btn"
+							onClick={() => setMic((a) => !a)}>
 							<img
 								src={micOn ? MicOff : Mic}
 								alt={micOn ? "Mic off" : "Mic On"}
 							/>
 						</button>
-						<button className="btn" onClick={() => setCamera((a) => !a)}>
+						<button
+							style={{ backgroundColor: cameraOn ? "#0e74ff" : "#fc484a" }}
+							className="btn"
+							onClick={() => setCamera((a) => !a)}>
 							<img
 								src={cameraOn ? VideocamOff : Videocam}
 								alt={cameraOn ? "camera off" : "camera On"}
 							/>
 						</button>
-						<button className="btn" onClick={() => setCamera((a) => !a)}>
+						<button style={{ backgroundColor: "#0e74ff" }} className="btn">
 							<img src={Upload} alt="Upload" />
 						</button>
-						<button className="btn" onClick={() => setCamera((a) => !a)}>
+						<button style={{ backgroundColor: "#0e74ff" }} className="btn">
 							<img src={Message} alt="Message" />
 						</button>
-						<button className="btn" onClick={() => setCamera((a) => !a)}>
+						<button style={{ backgroundColor: "#0e74ff" }} className="btn">
 							<img src={EllipsisH} alt="EllipsisH" />
 						</button>
 					</div>
@@ -256,6 +321,7 @@ function New_meeting() {
 				{isConnected && (
 					<div className="end_call">
 						<button
+							style={{ backgroundColor: "#fc484a" }}
 							className={`btn btn-phone ${calling ? "btn-phone-active" : ""}`}
 							onClick={() => setCalling((a) => !a)}>
 							{calling ? <p>End Call</p> : <i className="i-mdi-phone" />}
@@ -263,7 +329,8 @@ function New_meeting() {
 					</div>
 				)}
 				<div className="type_something">
-					<input type="text" placeholder="Type Something..." />
+					<input type="textarea" placeholder="Type Something..." />
+					{/* <input type="text" name="" id="" /> */}
 					<button type="submit">
 						<img src={Send} alt="" />
 					</button>
