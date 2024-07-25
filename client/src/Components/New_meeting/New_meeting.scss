@@ -324,16 +324,15 @@ body {
 							width: 15vw;
 							.name {
 								font-size: 12px;
+								padding: 3px 0px 0px 10px;
+							}
+							.message {
+								padding: 3px 10px;
 							}
 						}
 						.message-time {
 							font-size: 12px;
-							// margin-left: 50px;
 						}
-						// p {
-						// 	background-color: $chat;
-						// 	color: $fontGray;
-						// }
 					}
 				}
 			}
