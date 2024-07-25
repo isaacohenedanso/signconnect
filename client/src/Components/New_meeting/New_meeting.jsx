@@ -14,6 +14,7 @@ import AudioWave from "../../assets/icons/audioWave.svg";
 import Expand from "../../assets/icons/expand.svg";
 import Compress from "../../assets/icons/compress.svg";
 import User from "../../assets/icons/user.svg";
+import Caption from "../../assets/icons/caption.svg";
 import {
 	LocalUser, //render audio and video for local user
 	RemoteUser, //render audio and video for remote user
@@ -27,10 +28,20 @@ import {
 import { useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.css";
+import io from "socket.io-client";
+const socket = io("http://localhost:5000");
 import "./New_meeting.scss";
-
 function New_meeting() {
+	const [messages, setMessages] = useState([]);
+	const [name, setName] = useState("");
+	const [input, setInput] = useState("");
 	const [calling, setCalling] = useState(false);
+	// const liveVideo = useRef();
+	// const videoFeed = liveVideo.current?.querySelector(
+	// 	"div div div div div div video"
+	// );
+	// console.log("videoFeed", videoFeed);
+
 	const navigate = useNavigate();
 	const location = useLocation();
 	const isConnected = useIsConnected(); //stores user connection status
@@ -96,8 +107,6 @@ function New_meeting() {
 			// Add remote users
 			remoteUsers.forEach((user) => {
 				addParticipant(`${user.uid}`, false);
-				// console.log("remote participants", remoteUserName.current.value);
-				// window.alert("remote participants", remoteUserName.current.value);
 			});
 
 			// Clean up function to remove participants that are no longer connected
@@ -116,15 +125,47 @@ function New_meeting() {
 		}
 	}, [isConnected, firstName, lastName, remoteUsers]);
 
+	useEffect(() => {
+		socket.on("chat message", (msg) => {
+			setMessages((prevMessages) => [...prevMessages, msg]);
+		});
+
+		return () => {
+			socket.off("chat message");
+		};
+	}, [setMessages]);
+
+	const handleSubmit = (e) => {
+		e.preventDefault();
+		if (input && name) {
+			socket.emit("chat message", { name, message: input });
+			setInput("");
+		}
+	};
+	const showDate = () => {
+		const date = new Date();
+		const hour = date.getHours();
+		const minutes = date.getMinutes();
+
+		return `${hour}:${minutes.toString().padStart(2, "0")}`;
+	};
 	const disappear = () => {
 		setTimeout(() => {
 			document.querySelector(".alert").style.display = "none";
 		}, 3000);
 	};
 	const ExpandScreen = () => {
-		// const videoFeed = document.querySelector(".video_feed");
-		// videoFeed;
+		const videoFeed = document.querySelector(".video_feed");
+
+		videoFeed.style = {
+			width: "100vw",
+			height: "100vh",
+			overflow: "hidden",
+		};
 		console.log("bebe");
+		let screenSize;
+		screenSize = "true";
+		return screenSize;
 	};
 	disappear();
 	const useShowDate = () => {
@@ -225,6 +266,7 @@ function New_meeting() {
 				<div className="video_feed">
 					{isConnected ? (
 						<div className="user">
+							{/* ref={liveVideo} */}
 							<LocalUser
 								audioTrack={localMicrophoneTrack}
 								cameraOn={cameraOn}
@@ -250,11 +292,6 @@ function New_meeting() {
 					) : (
 						<div className="join-room">
 							<img alt="SignConnect" className="logo" src={SignConnect} />
-							{/* <input
-								type="text"
-								placeholder="Enter your userName"
-								ref={remoteUserName}
-							/> */}
 							<button
 								className={`join-channel ${
 									!AgoraConfig.appid || !AgoraConfig.channel ? "disabled" : ""
@@ -285,7 +322,20 @@ function New_meeting() {
 				</div>
 				<div className="chats">
 					<p>Chats</p>
-					<div></div>
+					<div>
+						<ul>
+							{messages.map((msg, index) => (
+								<li key={index}>
+									<img src={User} alt="user" />
+									<div className="messages">
+										<p className="name">{msg.name}</p>
+										<p className="message">{msg.message}</p>
+									</div>
+									<p className="message-time">{showDate()}</p>
+								</li>
+							))}
+						</ul>
+					</div>
 				</div>
 				{isConnected && (
 					<div className="controls">
@@ -311,6 +361,9 @@ function New_meeting() {
 							<img src={Upload} alt="Upload" />
 						</button>
 						<button style={{ backgroundColor: "#0e74ff" }} className="btn">
+							<img src={Caption} alt="Caption" />
+						</button>
+						<button style={{ backgroundColor: "#0e74ff" }} className="btn">
 							<img src={Message} alt="Message" />
 						</button>
 						<button style={{ backgroundColor: "#0e74ff" }} className="btn">
@@ -329,11 +382,24 @@ function New_meeting() {
 					</div>
 				)}
 				<div className="type_something">
-					<input type="textarea" placeholder="Type Something..." />
-					{/* <input type="text" name="" id="" /> */}
-					<button type="submit">
-						<img src={Send} alt="" />
-					</button>
+					<form onSubmit={handleSubmit}>
+						<input
+							type="text"
+							// value={name}
+							onChange={(e) => setInput(e.target.value)}
+							placeholder="Type something..."
+							id="message"
+							name="message"
+						/>
+						<button
+							type="submit"
+							onClick={() => {
+								setName([firstName, lastName]);
+								document.getElementById("message").value = "";
+							}}>
+							<img src={Send} alt="send" />
+						</button>
+					</form>
 				</div>
 				<Outlet />
 			</div>

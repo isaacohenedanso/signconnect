@@ -3,6 +3,9 @@ const connectDB = require("./db");
 const bcrypt = require("bcrypt");
 const model = require("./models/model");
 const cors = require("cors");
+const http = require("http");
+const socketIo = require("socket.io");
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -71,6 +74,38 @@ app.put("/profile/profil/:email", async (req, res) => {
 	}
 });
 
-app.listen(3001, () => {
-	console.log("Server is running on port 3001");
+const PORT_MONGODB = 3001;
+
+app.listen(PORT_MONGODB, () => {
+	console.log(`Server is running on port ${PORT_MONGODB}`);
+});
+
+const socketApp = express();
+socketApp.use(cors());
+
+const server = http.createServer(socketApp);
+const io = socketIo(server, {
+	cors: {
+		origin: [
+			"http://localhost:3000",
+			"http://localhost:5000",
+			"http://localhost:5173",
+		],
+		methods: ["GET", "POST"],
+	},
+});
+
+io.on("connection", (socket) => {
+	console.log("New client connected");
+	socket.on("chat message", (msg) => {
+		io.emit("chat message", msg);
+	});
+	socket.on("disconnect", () => {
+		console.log("Client disconnected");
+	});
+});
+
+const PORT_SOCKET = 5000;
+server.listen(PORT_SOCKET, () => {
+	console.log(`Socket server running on port ${PORT_SOCKET}`);
 });

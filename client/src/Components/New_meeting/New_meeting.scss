@@ -10,23 +10,45 @@ body {
 	$fontwhite: #fff;
 	$fontGray: #e0e0e0;
 
-	::-webkit-scrollbar {
-		// width: 3px;
-		height: 3px;
-		padding-bottom: 5px;
+	::-webkit-scrollbar:vertical {
+		width: 10px;
+		// height: 2px;
+		// padding-bottom: 5px;
 	}
-	::-webkit-scrollbar-track {
-		background-color: #fff;
+	::-webkit-scrollbar-track:vertical {
+		background-color: #ffffff1a;
 	}
-	::-webkit-scrollbar:horizontal {
-		width: 500px;
-	}
+
 	::-webkit-scrollbar-thumb {
 		width: 2px;
 		height: 10px;
 		background-color: #0e74ff;
 	}
+	// .scrollable-container {
+	// 	overflow-x: auto;
+	// 	scrollbar-width: none; /* Firefox */
+	// 	-ms-overflow-style: none; /* IE and Edge */
+	// 	scroll-behavior: smooth;
+	//   }
 
+	// ::-webkit-scrollbar {
+	// 	display: none; /* Chrome, Safari and Opera */
+	// }
+
+	/* Custom scrollbar */
+	::-webkit-scrollbar {
+		height: 8px;
+	}
+
+	::-webkit-scrollbar-track {
+		background: #ffffff1a;
+		border-radius: 4px;
+	}
+
+	::-webkit-scrollbar-thumb {
+		background-color: #3366ff;
+		border-radius: 4px;
+	}
 	.image {
 		width: 1.5rem;
 		height: 1.5rem;
@@ -182,22 +204,37 @@ body {
 				}
 			}
 			.join-room {
+				width: 500px;
+				height: 400px;
+				background-color: $inactive;
 				display: flex;
-				justify-content: center;
+				// justify-content: center;
 				align-items: center;
+				border-radius: 15px;
 				flex-direction: column;
+				// box-shadow: 5px 5px 5px;
 
 				img {
-					width: 100px;
-					margin: 5px;
+					width: 300px;
+					margin: 45px;
 					border-radius: 10px;
 				}
+
+				input {
+					width: 400px;
+					height: 50px;
+					padding: 15px;
+					border-radius: 15px;
+					color: #fff;
+					background-color: $chat;
+				}
 				button {
-					width: 150px;
+					width: 300px;
 					border-radius: 10px;
 					padding: 5px;
-					background-color: #fff;
+					background-color: $chat;
 					color: #928e8e;
+					margin-bottom: 45px;
 				}
 			}
 		}
@@ -208,7 +245,7 @@ body {
 			border-top: 1px solid #232636;
 			height: 100%;
 			p {
-				padding: 5px 15px;
+				padding: 25px 15px;
 				font-size: 1.2em;
 				height: auto;
 				@extend .p;
@@ -223,9 +260,9 @@ body {
 				overflow-x: hidden;
 				.participant {
 					padding: 5px;
-					margin: 10px 10px 0px 10px;
+					margin: 10px auto 0px auto;
 					border-radius: 2rem;
-					width: 100%;
+					width: 21vw;
 					height: 75px;
 					display: flex;
 					background-color: $videofeedBackground;
@@ -248,14 +285,57 @@ body {
 			flex-direction: column;
 			height: 100%;
 			p {
-				padding: 5px 15px;
+				padding: 25px 15px;
 				font-size: 1.2em;
 				height: auto;
 				@extend .p;
 			}
 			div {
 				background-color: $chat;
-				height: 100%;
+				height: 90%;
+				padding: 5px 0px;
+
+				ul {
+					display: flex;
+					align-items: center;
+					justify-content: flex-start;
+					flex-direction: column;
+					height: 100%;
+					margin: 10px 0px;
+					overflow-y: scroll;
+					overflow-x: hidden;
+					padding: 0px;
+					li {
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						list-style: none;
+						border-radius: 15px;
+						padding: 5px 0px;
+						margin-top: 10px;
+						color: $fontwhite;
+						img {
+							@extend .image;
+						}
+						.messages {
+							display: flex;
+							flex-direction: column;
+							background-color: $videofeedBackground;
+							width: 15vw;
+							.name {
+								font-size: 12px;
+							}
+						}
+						.message-time {
+							font-size: 12px;
+							// margin-left: 50px;
+						}
+						// p {
+						// 	background-color: $chat;
+						// 	color: $fontGray;
+						// }
+					}
+				}
 			}
 		}
 		.speakers {
@@ -330,12 +410,14 @@ body {
 		}
 		.type_something {
 			grid-area: type_something;
-			display: flex;
-			align-items: center;
 			margin: auto;
 			width: 100%;
 			border-left: 1px solid $chat;
 			padding: 0px 15px;
+			form {
+				display: flex;
+				align-items: center;
+			}
 			input {
 				border-radius: 25px;
 				background-color: $videofeedBackground;
@@ -347,6 +429,7 @@ body {
 				&:active {
 					border: 1px solid $chat;
 				}
+				color: $fontwhite;
 			}
 			button {
 				border-radius: 50%;
