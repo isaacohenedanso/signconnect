@@ -17,8 +17,8 @@ const io = socketIo(server, {
 io.on("connection", (socket) => {
 	console.log("New client connected");
 
-	socket.on("chat message", ({ name, msg }) => {
-		io.emit("chat message", { name, msg });
+	socket.on("chat message", (msg) => {
+		io.emit("chat message", msg);
 	});
 
 	socket.on("disconnect", () => {
