@@ -37,10 +37,8 @@ function New_meeting() {
 	const [input, setInput] = useState("");
 	const [calling, setCalling] = useState(false);
 	// const liveVideo = useRef();
-	// const videoFeed = liveVideo.current?.querySelector(
-	// 	"div div div div div div video"
-	// );
-	// console.log("videoFeed", videoFeed);
+	const videoFeed = document.querySelector("div div div div div div video");
+	console.log("videoFeed", videoFeed);
 
 	const navigate = useNavigate();
 	const location = useLocation();
